@@ -2,6 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(python scripts/hash_check.py*)",
+      "Bash(python scripts/archive.py*)",
+      "Bash(python scripts/profile.py*)",
       "Bash(notebooklm *)",
       "Bash(C:/Users/Yuhang/miniconda3/envs/mineru/python.exe*)",
       "Bash(python ~/.claude/skills/meeting_mind/scripts/run.py*)",

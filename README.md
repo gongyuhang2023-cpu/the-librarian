@@ -94,7 +94,9 @@ inbox/paper.pdf
   → Claude generates file profile (title, summary, keywords)
   → User selects target notebooks (multi-select)
   → Upload .md to NotebookLM
-  → Archive to PhD/raw/sources/<notebook-name>/
+  → Archive md + images to raw/sources/<notebook>/  (→ Wiki + Drive)
+  → Archive original PDF to raw/pdfs/<notebook>/    (→ local only)
+  → Insert PDF link into content.md header
   → Update registry + catalog
 ```
 
@@ -140,17 +142,22 @@ Auto-screenshot + audio recording → transcription → per-slide interpretation
 ## Data Flow | 数据流
 
 ```
-inbox/      → [ingest]  → PhD wiki raw/sources/<notebook>/  +  NotebookLM notebook
-meetings/   → [meeting] → PhD wiki raw/sources/<notebook>/  +  NotebookLM notebook
-                                    ↕                                 ↕
-                            registry/files.json         ~/.notebooklm/library_index.json
+inbox/
+  ├─ PDF → MinerU → md + images → raw/sources/<notebook>/  → NotebookLM + Wiki + Drive
+  │                └ original.pdf → raw/pdfs/<notebook>/    → local only
+  └─ .md ─────────────────────── → raw/sources/<notebook>/  → NotebookLM + Wiki + Drive
 
-                                    ↓
-                         LLM Wiki reads raw/sources/
-                                    ↓
-                         Generates wiki/ pages (Obsidian vault)
-                                    ↓
-                         Human reads in Obsidian
+meetings/ → [meeting] ─────────→ raw/sources/<notebook>/  → NotebookLM + Wiki + Drive
+
+                                         ↕                            ↕
+                                 registry/files.json      ~/.notebooklm/library_index.json
+
+                                         ↓
+                              LLM Wiki reads raw/sources/
+                                         ↓
+                              Generates wiki/ pages (Obsidian vault)
+                                         ↓
+                              Human reads in Obsidian
 ```
 
 ---

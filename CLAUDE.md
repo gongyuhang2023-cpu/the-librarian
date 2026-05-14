@@ -10,6 +10,7 @@
 4. 只上传 `.md` 文件到 NotebookLM（不传原始 PDF）
 5. 全局 catalog：`~/.notebooklm/library_index.json`（读/写）
 6. 本地注册表：`registry/files.json`（读/写）
+7. **归档必须用 `python scripts/archive.py`**（禁止手动 mv/cp 到 raw/ 目录）
 
 ## Skill 路由
 
@@ -25,13 +26,21 @@
 - MinerU：`C:/Users/Yuhang/miniconda3/envs/mineru/python.exe "C:/Users/Yuhang/.claude/skills/mineru/scripts/run_mineru.py"`
 - NotebookLM CLI 命令参考：`~/.claude/skills/notebooklm/SKILL.md`
 - 去重脚本：`python scripts/hash_check.py -p <files> -r registry/files.json`
-- Wiki raw 存储：`C:/Users/Yuhang/Library/PhD/raw/sources/`（按 notebook 名分文件夹）
+- 画像提取：`python scripts/profile.py -p <md_path>`（自动提取 title/DOI/abstract/conclusion，无 abstract 则输出全文）
+- 归档脚本：`python scripts/archive.py --paper-name <name> --notebooks <names> --processed-md <path> [--processed-images <path>] [--original-pdf <path>]`
+- Wiki raw 内容：`C:/Users/Yuhang/Library/PhD/raw/sources/`（md + images，按 notebook 名分文件夹）
+- Wiki raw PDF：`C:/Users/Yuhang/Library/PhD/raw/pdfs/`（PDF 原件，仅本地保留）
 
 ## 数据流
 
 ```
-inbox/      → [ingest skill]  → PhD wiki raw/sources/<notebook>/   +  NotebookLM notebook
-meetings/   → [meeting skill] → PhD wiki raw/sources/<notebook>/   +  NotebookLM notebook
-                                       ↕                                    ↕
-                               registry/files.json            ~/.notebooklm/library_index.json
+inbox/
+  ├─ PDF ──→ MinerU ──→ md + images → raw/sources/<notebook>/  →  NotebookLM + Wiki + Drive
+  │                  └→ original.pdf → raw/pdfs/<notebook>/     →  仅本地保留
+  └─ .md ──→ 直接 ─────────────────→ raw/sources/<notebook>/  →  NotebookLM + Wiki + Drive
+
+meetings/ → [meeting skill] ──────→ raw/sources/<notebook>/  →  NotebookLM + Wiki + Drive
+
+                                           ↕                            ↕
+                                   registry/files.json      ~/.notebooklm/library_index.json
 ```
