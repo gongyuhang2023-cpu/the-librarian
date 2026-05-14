@@ -1,0 +1,20 @@
+# Research materials — user-specific, not for public repo
+library/
+inbox/
+meetings/
+registry/files.json
+
+# Processing temp
+library/_processing/
+
+# Claude Code project state
+.claude/settings.local.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS
+Thumbs.db
+.DS_Store
