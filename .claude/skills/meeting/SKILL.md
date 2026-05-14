@@ -31,7 +31,11 @@ description: |
 
 读取 `~/.claude/skills/meeting_mind/config.yaml` 获取音频/转录默认设置。
 
-Use **AskUserQuestion** with 3 questions:
+先直接询问用户两个信息（自由文本，非 AskUserQuestion）：
+- **会议主题**：本次会议/报告的标题（如"噬菌体封装策略综述"）
+- **报告人**：谁在做报告（如"张三"、"李老师"）
+
+然后 Use **AskUserQuestion** with 3 questions:
 
 Question 1 — Meeting software:
 - header: "会议软件"
@@ -126,6 +130,8 @@ Read `meetings/YYYY-MM-DD/transcript/transcript.md` into memory.
 # 组会解读 — YYYY-MM-DD
 
 ## 会议信息
+- 主题: <会议主题>
+- 报告人: <报告人>
 - 日期: YYYY-MM-DD
 - 时长: XX 分钟 (HH:MM ~ HH:MM)
 - 独立幻灯片: N 张
@@ -147,6 +153,9 @@ Based on interpretation.md, write `summary.md` to `meetings/YYYY-MM-DD/`:
 
 ```markdown
 # 组会总结 — YYYY-MM-DD
+
+- 主题: <会议主题>
+- 报告人: <报告人>
 
 > 共 N 张独立幻灯片 | 录音时长 XX:XX | HH:MM ~ HH:MM
 
@@ -208,15 +217,17 @@ notebooklm source add "meetings/YYYY-MM-DD/summary.md" -n <UUID> --json
 
 ### Step 5: 归档与注册
 
-**5a. 归档到 library/**
+**5a. 归档到 Wiki raw**
 
-对每个目标 notebook，复制到 `library/<notebook-slug>/meeting-YYYY-MM-DD/`：
+Wiki raw 根目录：`C:/Users/Yuhang/Library/PhD/raw/sources/`
+
+对每个目标 notebook，从 `~/.notebooklm/library_index.json` 读取 notebook 的 `name` 字段，复制到：
 ```
-library/<notebook-slug>/meeting-YYYY-MM-DD/
+C:/Users/Yuhang/Library/PhD/raw/sources/<notebook-name>/meeting-YYYY-MM-DD/
 ├── interpretation.md
 └── summary.md
 ```
-多 notebook 时复制到每个对应目录。
+多 notebook 时复制到每个对应 notebook-name 目录。文件夹不存在时自动创建。
 
 **5b. 更新 files.json**
 
@@ -230,7 +241,7 @@ library/<notebook-slug>/meeting-YYYY-MM-DD/
   "type": "meeting",
   "keywords": ["kw1", "kw2"],
   "notebooks": ["uuid1", "uuid2"],
-  "local_paths": ["library/slug1/meeting-YYYY-MM-DD/", "library/slug2/meeting-YYYY-MM-DD/"],
+  "local_paths": ["PhD/raw/sources/notebook-name/meeting-YYYY-MM-DD/"],
   "source_files": ["interpretation.md", "summary.md"],
   "processed": true,
   "added": "YYYY-MM-DD"
@@ -254,7 +265,7 @@ library/<notebook-slug>/meeting-YYYY-MM-DD/
 - 幻灯片: N 张
 - 已上传: interpretation.md + summary.md → K 本 notebook
 - 会议数据: meetings/YYYY-MM-DD/
-- 归档位置: library/<slugs>/meeting-YYYY-MM-DD/
+- 归档位置: PhD/raw/sources/<notebook-names>/meeting-YYYY-MM-DD/
 ```
 
 ---

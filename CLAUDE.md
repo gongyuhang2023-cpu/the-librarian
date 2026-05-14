@@ -25,12 +25,13 @@
 - MinerU：`C:/Users/Yuhang/miniconda3/envs/mineru/python.exe "C:/Users/Yuhang/.claude/skills/mineru/scripts/run_mineru.py"`
 - NotebookLM CLI 命令参考：`~/.claude/skills/notebooklm/SKILL.md`
 - 去重脚本：`python scripts/hash_check.py -p <files> -r registry/files.json`
+- Wiki raw 存储：`C:/Users/Yuhang/Library/PhD/raw/sources/`（按 notebook 名分文件夹）
 
 ## 数据流
 
 ```
-inbox/      → [ingest skill]  → library/<slug>/<paper>/     +  NotebookLM notebook
-meetings/   → [meeting skill] → library/<slug>/meeting-*/   +  NotebookLM notebook
-                                       ↕                            ↕
-                               registry/files.json      ~/.notebooklm/library_index.json
+inbox/      → [ingest skill]  → PhD wiki raw/sources/<notebook>/   +  NotebookLM notebook
+meetings/   → [meeting skill] → PhD wiki raw/sources/<notebook>/   +  NotebookLM notebook
+                                       ↕                                    ↕
+                               registry/files.json            ~/.notebooklm/library_index.json
 ```

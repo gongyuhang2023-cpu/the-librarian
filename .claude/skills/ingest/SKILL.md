@@ -133,23 +133,27 @@ notebooklm source add "<content.md 路径>" -n <UUID> --json
 
 ## Step 8: 归档与注册
 
-### 8a. 整理三件套到最终位置
+### 8a. 整理三件套到 Wiki raw
 
-对每个目标 notebook，将文件移入 `library/<notebook-slug>/<paper-name>/`：
+Wiki raw 根目录：`C:/Users/Yuhang/Library/PhD/raw/sources/`
+
+对每个目标 notebook，从 `~/.notebooklm/library_index.json` 读取 notebook 的 `name` 字段，将文件移入对应文件夹：
 
 ```
-library/<notebook-slug>/<paper-name>/
+C:/Users/Yuhang/Library/PhD/raw/sources/<notebook-name>/<paper-name>/
 ├── original.pdf       ← 从 inbox 移入
 ├── content.md         ← 从 _processing 移入
 └── images/            ← 从 _processing 移入（重命名 *_images/ → images/）
 ```
+
+**notebook-name**：直接使用 notebook 的显示名称（如 `PC047 粘液螺旋菌`、`噬菌体递送`），文件夹不存在时自动创建。
 
 **paper-name** 生成规则：
 - 取 `作者年份_关键词` 格式（如 `Smith2024_phage_therapy`）
 - kebab-case，限 40 字符内
 - 若同名已存在，追加 `-2`
 
-**多 notebook 时**：复制到每个对应 slug 目录（保持本地与 NotebookLM 完全镜像）
+**多 notebook 时**：复制到每个对应 notebook-name 目录
 
 ### 8b. 更新注册表
 
@@ -163,7 +167,7 @@ library/<notebook-slug>/<paper-name>/
   "type": "<paper/report/...>",
   "keywords": ["kw1", "kw2"],
   "notebooks": ["uuid1", "uuid2"],
-  "local_paths": ["library/slug1/paper-name/", "library/slug2/paper-name/"],
+  "local_paths": ["PhD/raw/sources/notebook-name/paper-name/"],
   "processed": true,
   "added": "<today>"
 }
