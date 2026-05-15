@@ -63,10 +63,10 @@ notebooklm create "<原名>-vol2" --json
 
 4. AskUserQuestion 展示候选（标题+摘要+当前所属），用户勾选
 
-5. 选中文件：
-   - `notebooklm source add "<content.md>" -n <UUID> --json`
-   - 复制到 `PhD/raw/sources/<notebook-name>/<paper-name>/`
-   - 更新 files.json（notebooks 追加 UUID，content_paths 追加路径）
+5. 选中文件（读 `paths.yaml` 获取 `sources_dir` 和 `backup_dir`）：
+   - `notebooklm source add "<md_file>" -n <UUID> --json`
+   - 复制 md 到 `sources_dir/<new-notebook>/paper-name.md`（扁平）
+   - 更新 files.json（notebooks 追加 UUID，source_paths 追加路径）
    - 更新 catalog source_count
 
 ## F. 同步远端
@@ -82,7 +82,7 @@ notebooklm list --json
 
 ## G. 注册表维护
 
-遍历 `registry/files.json` 和 `PhD/raw/sources/`，报告：孤立记录（registry 有文件无）、未注册文件（文件有 registry 无）、无效 notebook 引用。用户确认后清理。
+读 `paths.yaml` 获取 `sources_dir` 和 `backup_dir`。遍历 `registry/files.json` 和 `sources_dir/`，报告：孤立记录（registry 有文件无）、未注册文件（文件有 registry 无）、无效 notebook 引用。用户确认后清理。
 
 ## H. 初始化
 

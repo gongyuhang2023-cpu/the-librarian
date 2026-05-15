@@ -72,6 +72,7 @@ notebooklm source add "<library/_processing/xxx.md>" -n <UUID> --json
 ### 8a. 归档（必须用 archive.py）
 
 > **⚠️ 禁止手动 mv/cp 文件到 raw/ 目录。必须调用此脚本。**
+> archive.py 自动读取 `paths.yaml` 获取输出路径。
 
 生成 PAPER_NAME：`作者年份_关键词` 格式，snake_case，≤40 字符。
 NOTEBOOK_NAME：从 library_index.json 读 `name` 字段。
@@ -88,9 +89,13 @@ python scripts/archive.py \
 无图片省略 `--processed-images`，非 PDF 源省略 `--original-pdf`。
 确认输出 JSON 的 `status` 为 `ok`。
 
+双输出：
+- **sources 层**：`sources_dir/<notebook>/paper-name.md`（扁平 md-only，无图片）
+- **backup 层**：`backup_dir/<notebook>/<paper-name>/`（完整包：PDF + md + images）
+
 ### 8b. 更新注册表
 
-从 archive.py 输出取 `content_paths` 和 `pdf_path`，向 `registry/files.json` 追加：
+从 archive.py 输出取 `source_paths` 和 `backup_paths`，向 `registry/files.json` 追加：
 
 ```json
 {
@@ -98,8 +103,8 @@ python scripts/archive.py \
   "title": "<标题>", "summary": "<中文摘要>",
   "type": "<paper/book/...>", "keywords": ["kw1", "kw2"],
   "notebooks": ["uuid1", "uuid2"],
-  "content_paths": ["PhD/raw/sources/<notebook>/<paper>/"],
-  "pdf_path": "PhD/raw/pdfs/<notebook>/<paper>.pdf",
+  "source_paths": ["raw/sources/<notebook>/<paper-name>.md"],
+  "backup_path": "00-raw/<notebook>/<paper-name>/",
   "processed": true, "added": "<today>"
 }
 ```

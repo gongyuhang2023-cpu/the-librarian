@@ -11,6 +11,7 @@
 5. 全局 catalog：`~/.notebooklm/library_index.json`（读/写）
 6. 本地注册表：`registry/files.json`（读/写）
 7. **归档必须用 `python scripts/archive.py`**（禁止手动 mv/cp 到 raw/ 目录）
+8. **所有输出路径定义在 `paths.yaml`**（归档/路径操作前先读此文件获取当前路径）
 
 ## Skill 路由
 
@@ -23,24 +24,27 @@
 
 ## 环境
 
+- 路径配置：**`paths.yaml`**（所有输出路径的唯一真相源，修改路径只需编辑此文件）
 - MinerU：`C:/Users/Yuhang/miniconda3/envs/mineru/python.exe "C:/Users/Yuhang/.claude/skills/mineru/scripts/run_mineru.py"`
 - NotebookLM CLI 命令参考：`~/.claude/skills/notebooklm/SKILL.md`
 - 去重脚本：`python scripts/hash_check.py -p <files> -r registry/files.json`
 - 画像提取：`python scripts/profile.py -p <md_path>`（自动提取 title/DOI/abstract/conclusion，无 abstract 则输出全文）
-- 归档脚本：`python scripts/archive.py --paper-name <name> --notebooks <names> --processed-md <path> [--processed-images <path>] [--original-pdf <path>]`
-- Wiki raw 内容：`C:/Users/Yuhang/Library/PhD/raw/sources/`（md + images，按 notebook 名分文件夹）
-- Wiki raw PDF：`C:/Users/Yuhang/Library/PhD/raw/pdfs/`（PDF 原件，仅本地保留）
+- 归档脚本：`python scripts/archive.py --paper-name <name> --notebooks <names> --processed-md <path> [--processed-images <path>] [--original-pdf <path>]`（自动读取 paths.yaml）
 
 ## 数据流
 
 ```
 inbox/
-  ├─ PDF ──→ MinerU ──→ md + images → raw/sources/<notebook>/  →  NotebookLM + Wiki + Drive
-  │                  └→ original.pdf → raw/pdfs/<notebook>/     →  仅本地保留
-  └─ .md ──→ 直接 ─────────────────→ raw/sources/<notebook>/  →  NotebookLM + Wiki + Drive
+  ├─ PDF ──→ MinerU → md ──→ sources/<nb>/paper.md             → NotebookLM + Wiki
+  │                  └→ 完整包 → 00-raw/<nb>/<paper>/           → 全量备份(PDF+md+images)
+  └─ .md ──→ 直接 ──→ sources/<nb>/paper.md                     → NotebookLM + Wiki
+                   └→ 00-raw/<nb>/<paper>/paper.md               → 全量备份
 
-meetings/ → [meeting skill] ──────→ raw/sources/<notebook>/  →  NotebookLM + Wiki + Drive
+meetings/ → [meeting] → sources/<nb>/meeting-*.md                → NotebookLM + Wiki
+                      → 00-raw/<nb>/meeting-YYYY-MM-DD/          → 全量备份(截图+录音+转录)
 
-                                           ↕                            ↕
-                                   registry/files.json      ~/.notebooklm/library_index.json
+                                       ↕                              ↕
+                               registry/files.json        ~/.notebooklm/library_index.json
+
+路径定义见 paths.yaml：sources_dir(扁平md) / backup_dir(完整备份)
 ```

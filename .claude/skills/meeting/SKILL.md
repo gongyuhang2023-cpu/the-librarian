@@ -133,7 +133,12 @@ notebooklm source add "meetings/YYYY-MM-DD/summary.md" -n <UUID> --json
 
 ### Step 5: 归档与注册
 
-**归档**：复制到 `C:/Users/Yuhang/Library/PhD/raw/sources/<notebook-name>/meeting-YYYY-MM-DD/`（interpretation.md + summary.md）。多 notebook 复制到每个。
+> 归档前读 `paths.yaml` 获取 `sources_dir` 和 `backup_dir`。
+
+**归档（双输出）**：
+
+- **sources 层**：复制 `interpretation.md` → `sources_dir/<nb>/meeting-YYYY-MM-DD-interpretation.md`，复制 `summary.md` → `sources_dir/<nb>/meeting-YYYY-MM-DD-summary.md`。扁平放置，文件名加日期前缀。多 notebook 复制到每个。
+- **backup 层**：复制整个 `meetings/YYYY-MM-DD/` 目录到 `backup_dir/<nb>/meeting-YYYY-MM-DD/`（含截图、录音、转录、md 完整数据）。多 notebook 复制到每个。
 
 **注册**：向 `registry/files.json` 追加：
 ```json
@@ -141,8 +146,9 @@ notebooklm source add "meetings/YYYY-MM-DD/summary.md" -n <UUID> --json
   "hash": "meeting:YYYY-MM-DD", "filename": "meeting-YYYY-MM-DD",
   "title": "组会 — YYYY-MM-DD: [主题]", "summary": "...",
   "type": "meeting", "keywords": [...],
-  "notebooks": ["uuid1"], "content_paths": ["PhD/raw/sources/<nb>/meeting-YYYY-MM-DD/"],
-  "source_files": ["interpretation.md", "summary.md"],
+  "notebooks": ["uuid1"],
+  "source_paths": ["raw/sources/<nb>/meeting-YYYY-MM-DD-interpretation.md", "raw/sources/<nb>/meeting-YYYY-MM-DD-summary.md"],
+  "backup_path": "00-raw/<nb>/meeting-YYYY-MM-DD/",
   "processed": true, "added": "YYYY-MM-DD"
 }
 ```

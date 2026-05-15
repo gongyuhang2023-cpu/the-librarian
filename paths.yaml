@@ -1,0 +1,16 @@
+# paths.yaml — 所有输出路径的唯一真相源
+# 修改路径后 archive.py 自动读取；CLAUDE.md/SKILL.md 中指示 Claude 先读此文件
+# meeting_mind/config.yaml 的 base_dir 也应与 sources_dir 保持一致
+
+wiki_root: "C:/Users/Yuhang/Library/Research LLM Wiki"
+
+# raw/sources/<notebook>/paper-name.md — 扁平 md-only，供 LLM 消费
+sources_dir: "C:/Users/Yuhang/Library/Research LLM Wiki/raw/sources"
+
+# 00-raw/<notebook>/<paper-name>/ — 完整备份（PDF + md + images）
+backup_dir: "C:/Users/Yuhang/Library/Research LLM Wiki/00-raw"
+
+# registry/files.json 中存储的相对路径前缀（相对于 wiki_root）
+registry_prefix:
+  sources: "raw/sources"
+  backup: "00-raw"

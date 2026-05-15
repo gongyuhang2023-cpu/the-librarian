@@ -94,9 +94,8 @@ inbox/paper.pdf
   → Claude generates file profile (title, summary, keywords)
   → User selects target notebooks (multi-select)
   → Upload .md to NotebookLM
-  → Archive md + images to raw/sources/<notebook>/  (→ Wiki + Drive)
-  → Archive original PDF to raw/pdfs/<notebook>/    (→ local only)
-  → Insert PDF link into content.md header
+  → Archive md to sources/<notebook>/paper.md       (→ flat md-only, for LLM)
+  → Archive full package to 00-raw/<notebook>/<paper>/  (→ PDF + md + images backup)
   → Update registry + catalog
 ```
 
@@ -116,7 +115,8 @@ Auto-screenshot + audio recording → transcription → per-slide interpretation
   → Generate interpretation.md (per-slide analysis)
   → Generate summary.md (key takeaways)
   → Classify & upload to NotebookLM
-  → Archive to PhD/raw/sources/<notebook-name>/
+  → Archive md to sources/<notebook>/              (→ flat md-only, for LLM)
+  → Archive full data to 00-raw/<notebook>/meeting-YYYY-MM-DD/  (→ screenshots + audio + transcript backup)
 ```
 
 ### Manage — Notebook Administration | 笔记本管理
@@ -143,14 +143,16 @@ Auto-screenshot + audio recording → transcription → per-slide interpretation
 
 ```
 inbox/
-  ├─ PDF → MinerU → md + images → raw/sources/<notebook>/  → NotebookLM + Wiki + Drive
-  │                └ original.pdf → raw/pdfs/<notebook>/    → local only
-  └─ .md ─────────────────────── → raw/sources/<notebook>/  → NotebookLM + Wiki + Drive
+  ├─ PDF → MinerU → md ──→ sources/<nb>/paper.md             → NotebookLM + Wiki
+  │                └→ 完整包 → 00-raw/<nb>/<paper>/           → full backup (PDF+md+images)
+  └─ .md ──→ 直接 ──→ sources/<nb>/paper.md                   → NotebookLM + Wiki
+                   └→ 00-raw/<nb>/<paper>/paper.md             → full backup
 
-meetings/ → [meeting] ─────────→ raw/sources/<notebook>/  → NotebookLM + Wiki + Drive
+meetings/ → [meeting] → sources/<nb>/meeting-*.md              → NotebookLM + Wiki
+                      → 00-raw/<nb>/meeting-YYYY-MM-DD/        → full backup (screenshots+audio+transcript)
 
-                                         ↕                            ↕
-                                 registry/files.json      ~/.notebooklm/library_index.json
+                                       ↕                              ↕
+                               registry/files.json        ~/.notebooklm/library_index.json
 
                                          ↓
                               LLM Wiki reads raw/sources/
@@ -158,6 +160,8 @@ meetings/ → [meeting] ─────────→ raw/sources/<notebook>/  
                               Generates wiki/ pages (Obsidian vault)
                                          ↓
                               Human reads in Obsidian
+
+Path config: paths.yaml (single source of truth for all output paths)
 ```
 
 ---
@@ -253,9 +257,9 @@ Paths in `CLAUDE.md` and `.claude/skills/` need to be adapted to your environmen
 
 `CLAUDE.md` 和 `.claude/skills/` 中的路径需要根据你的环境调整：
 
+- **Output paths**: edit `paths.yaml` (single source of truth for all archive paths)
 - MinerU path (`CLAUDE.md` → Environment section)
 - MeetingMind script path (`.claude/skills/meeting/SKILL.md`)
-- Wiki raw storage path (default: `~/Library/PhD/raw/sources/`)
 - Permission allowlist (`.claude/settings.json`)
 
 ---
