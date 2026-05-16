@@ -8,58 +8,56 @@
 
 ## Design Philosophy | 设计哲学
 
-### The Problem | 问题
+### The Idea | 核心思想
 
-Research materials accumulate fast — papers, meeting notes, protocols. But raw PDFs sitting in folders aren't knowledge. They need to be parsed, organized, cross-referenced, and made accessible. Humans shouldn't do this bookkeeping. AI should.
+This project is a concrete implementation of the [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) pattern proposed by Andrej Karpathy. The core insight: instead of retrieving from raw documents every time (RAG), have the LLM **incrementally build and maintain a persistent wiki** — a structured, interlinked knowledge base that compounds with every source you add. As Karpathy puts it:
 
-研究资料积累很快——论文、会议记录、实验方案。但堆在文件夹里的 PDF 不是知识，它们需要被解析、分类、交叉引用、变得可检索。人类不该做这些簿记工作，AI 应该来做。
+本项目是 Andrej Karpathy 提出的 [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 模式的一个具体实现。核心洞察：不要每次都从原始文档中检索（RAG），而是让 LLM **增量构建和维护一个持久化的 wiki**——一个结构化、互相链接的知识库，随着每份新资料的加入持续复利增长。如 Karpathy 所说：
 
-### Two Consumers, Two Formats | 两种消费者，两种格式
+> "The human's job is to curate sources, direct the analysis, ask good questions, and think about what it all means. The LLM's job is everything else."
 
-AI and humans consume knowledge differently. This project serves both:
+### Cognitive Division | 认知分工
 
-AI 和人类消费知识的方式完全不同。本项目同时服务两者：
+Every research task involves four stages. Humans and AI have different strengths at each:
 
-| | **AI (Claude Code)** | **Human (Researcher)** |
+每个研究任务都包含四个认知阶段，人类和 AI 各有所长：
+
+| Stage | Primary | Role of AI | 阶段 | 主导 | AI 角色 |
+|-------|---------|------------|------|------|---------|
+| **Comprehend** | Human | Provide structured knowledge | **理解** | 人类 | 提供结构化知识 |
+| **Think** | AI-assisted | Retrieve evidence, find connections | **思考** | AI 辅助 | 检索证据、发现关联 |
+| **Decide** | Human | Present options with trade-offs | **决策** | 人类 | 呈现选项与权衡 |
+| **Execute** | AI | Parse, cross-reference, maintain | **执行** | AI | 解析、交叉引用、维护 |
+
+AI is not a replacement for the brain — it's a **plug-in that extends it**. Humans retain direction and judgment; AI amplifies processing bandwidth.
+
+AI 不是大脑的替代品——而是大脑的**增强插件**。人类保留方向感和判断力，AI 放大处理带宽。
+
+### Why Two Layers | 为什么需要双层架构
+
+This division naturally produces two tools serving two consumers:
+
+这种分工自然产生了服务两个消费者的两个工具：
+
+| | **NotebookLM** | **LLM Wiki** |
 |---|---|---|
-| **Needs** | Full-text, precise, searchable | Distilled, structured, narrative |
-| **Platform** | Google NotebookLM | LLM Wiki (Obsidian vault) |
-| **Format** | Parsed markdown (complete) | Synthesized wiki pages (curated) |
-| **Access** | API query | Read in Obsidian |
+| **Serves** | AI thinking & execution | Human comprehension & decision |
+| **Why** | Grounded in full source text — reduces hallucination, enables precise reasoning | Structured accumulation — turns scattered reading into lasting mental models |
+| **Format** | Complete parsed markdown | Synthesized, interlinked wiki pages |
+| **Access** | Claude Code queries via API | Human reads in Obsidian |
 
-| | **AI (Claude Code)** | **人类（研究者）** |
+| | **NotebookLM** | **LLM Wiki** |
 |---|---|---|
-| **需要** | 全文、精确、可检索 | 提炼、结构化、叙事性 |
-| **平台** | Google NotebookLM | LLM Wiki（Obsidian 知识库） |
-| **格式** | 解析后的 markdown（完整） | 综合生成的 wiki 页面（策展） |
-| **访问** | API 查询 | Obsidian 阅读 |
+| **服务** | AI 的思考与执行 | 人类的理解与决策 |
+| **原因** | 基于全文——减少幻觉，精确推理 | 结构化积累——把碎片阅读变成持久心智模型 |
+| **格式** | 完整解析后的 markdown | 综合生成的互联 wiki 页面 |
+| **访问** | Claude Code 通过 API 查询 | 人类在 Obsidian 中阅读 |
 
-### The Knowledge Loop | 知识飞轮
+### The Librarian's Role | 管理员的角色
 
-```
-Raw Literature ──→ NotebookLM (AI knowledge base)
-                        │
-                   Claude Code queries
-                        │
-                   LLM Wiki generates Synthesis
-                        │
-                   Human reads & understands
-                        │
-                   Better questions & mental models
-                        │
-                   Higher quality Synthesis ──→ Deeper understanding
-                        │
-                        └──→ (cycle continues)
-```
+The Librarian is the **intake hub** — it ensures every piece of research material flows correctly into both layers. You drop a PDF into `inbox/`; it handles parsing, deduplication, classification, upload to NotebookLM, and archiving to wiki raw. The human never touches the bookkeeping.
 
-The Librarian is the **intake hub** of this loop — it ensures every piece of research material flows into both layers:
-
-The Librarian 是这个飞轮的**入口枢纽**——确保每份研究资料都流入两层系统：
-
-1. **NotebookLM** (L2 cache) — full source text for AI verification and deep queries
-2. **Wiki raw** (L1 cache) — local markdown for LLM Wiki to generate human-readable synthesis
-
-### Human–AI Division of Labor | 人机分工
+The Librarian 是这个系统的**入口枢纽**——确保每份研究资料正确流入两层系统。你把 PDF 丢进 `inbox/`，它负责解析、去重、分类、上传 NotebookLM、归档到 wiki raw。人类不碰簿记工作。
 
 | **Human** | **AI (The Librarian)** |
 |---|---|
@@ -262,8 +260,3 @@ Paths in `CLAUDE.md` and `.claude/skills/` need to be adapted to your environmen
 - MeetingMind script path (`.claude/skills/meeting/SKILL.md`)
 - Permission allowlist (`.claude/settings.json`)
 
----
-
-## License
-
-MIT
